@@ -3,6 +3,8 @@ var router = express.Router();
 
 function initEmployee(db) {
   var empModel = require('./employeeModel')(db);
+  var data ) null;
+
 
   //rutas a implementar
   // metodo     ruta                     body
@@ -18,6 +20,16 @@ function initEmployee(db) {
    */
 
   router.get('/all', (req, res, next) => {
+
+    employeeModel.getEmployees(
+      function(err, docs){
+      if(err) {
+        console.log(err);
+        return res.status(500).json({error:"Algo Paso"});
+      }
+      return res.status(200).json(docs);
+    }
+    );
     /*
     empModel.xyz( (err, docs)=>{
       return res.status(200).json(docs);
@@ -25,7 +37,16 @@ function initEmployee(db) {
     */
   });// all
 
-  
+  router.get('/byid/:EmployeeID', (req, res, next)=>{
+    employeeModel.getEmployeesById(req.params.EmployeeID, (err, docs){
+      if(err){
+      console.log(err);
+      return res.status(500).json({"error":"Error al obtener el Empleado"});
+    }
+    return res.status(200).json(docs);
+    });//busquedaPorID
+  });//byid
+
   return router;
 }
 
