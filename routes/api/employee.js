@@ -37,8 +37,8 @@ function initEmployee(db) {
     */
   });// all
 
-  router.get('/byid/:EmployeeID', (req, res, next)=>{
-    employeeModel.getEmployeesById(req.params.EmployeeID, (err, docs){
+  router.get('/byid/:id', (req, res, next)=>{
+    employeeModel.getEmployeesById(req.params.id, (err, docs){
       if(err){
       console.log(err);
       return res.status(500).json({"error":"Error al obtener el Empleado"});
@@ -47,6 +47,36 @@ function initEmployee(db) {
     });//busquedaPorID
   });//byid
 
+  router.get('/bycompany/:company', (req, res, next)=>{
+    employeeModel.getEmployeesByCompany(req.params.id, (err, docs){
+      if(err){
+      console.log(err);
+      return res.status(500).json({"error":"Error al obtener el Empleado"});
+    }
+    return res.status(200).json(docs);
+  });//busquedaPorCompany
+});//byCompany
+
+  router.get('/bytags/:tag', (req, res, next)=>{
+    employeeModel.searchByTag((req.params.tag || '').split('_'), (err, docs)=>{
+    if(err){
+      console.log(err);
+      return res.status(500).json({"error":"No se encontro TAG"});
+    }else{
+      return res.status(200).json(docs);
+    }
+  } ); //searchTag
+});// bytag
+
+router.put('/addtags/:id', (req, res, next)=>{
+  employeeModel.addEmployeeATag((req.body.tags || '').split('|'), req.params.id, (err, rsult)=>{
+    if(err){
+      console.log(err);
+      return res.status(500).json({"error":"No se puede agregar el TAG"});
+    }
+    return res.status(200).json(rsult);
+  });// addTag
+});// addtags
   return router;
 }
 

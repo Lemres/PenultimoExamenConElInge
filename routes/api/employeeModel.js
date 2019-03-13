@@ -31,9 +31,16 @@ function employeeModel(db){
   }
 
   lib.getEmployeesByCompany = (company, handler) => {
+obt.findOne({"company": new ObjectID(company)},(err, doc)=>{
+    if(err){
+      handler(err, null);
+    }else{
+      handler(null, doc);
+    }
+});
     // implementar
     // solo mostrar name, email, company
-    return handler(new Error("No Implementado"), null);
+
   }
 
   lib.getEmployeesByAgeRange = (ageLowLimit, ageHighLimit, handler) => {
@@ -46,19 +53,34 @@ function employeeModel(db){
   }
 
   lib.getEmployeesByTag = (tag, handler) => {
+    var queryObject= {"tags": {"$in": Array.isArray(tags)? tags: [tags]}};
+  obt.find(queryObject).toArray((err, docs) => {
+    if(err){
+      handler(err, null);
+    }else{
+      handler(null, docs);
+    }
+  });
     //implementar
     // obtener todos los documentos que contenga
     // al menos una vez el tag dentro del arreglo
     // tags
     // mostrar solo name, email, tags
-    return handler(new Error("No Implementado"), null);
   }
 
   lib.addEmployeeATag = ( tag, id, handler) => {
+    var curatedTags = Array.isArray(tags)? tags: [tags];
+  var updateObject = { "$set": { "tags": curatedTags}};
+  obt.updateOne({"_id": ObjectId(id)}, updateObject, (err, rsult)=>{
+      if(err){
+        handler(err, null);
+      }else{
+        handler(null, rsult.result);
+      }
+  });
     //Implementar
     //Se requiere agregar a un documento un nuevo tag
     // $push
-    return handler(new Error("No Implementado"), null);
   }
 
   lib.removeEmployee = (id, handler) => {
