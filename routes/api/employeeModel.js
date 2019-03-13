@@ -3,8 +3,9 @@ var ObjectID = require('mongodb').ObjectID;
 function employeeModel(db){
   var lib = {};
   var empColl = db.collection('emps');
+
   lib.getEmployees = (handler)=>{
-    obt.find({}).toArray(
+    empColl.find({}).toArray(
       (err , docs) => {
         if(err){
           handler(err, null);
@@ -18,7 +19,7 @@ function employeeModel(db){
   }
 
   lib.getEmployeesById = (id, handler) => {
-    obt.findOne({"_id": new ObjectID(id)},(err, doc)=>{
+    empColl.findOne({"_id": new ObjectID(id)},(err, doc)=>{
       if(err){
           handler(err, null);
         }else{
@@ -31,7 +32,7 @@ function employeeModel(db){
   }
 
   lib.getEmployeesByCompany = (company, handler) => {
-obt.findOne({"company": new ObjectID(company)},(err, doc)=>{
+empColl.findOne({"company": new ObjectID(company)},(err, doc)=>{
     if(err){
       handler(err, null);
     }else{
@@ -44,17 +45,34 @@ obt.findOne({"company": new ObjectID(company)},(err, doc)=>{
   }
 
   lib.getEmployeesByAgeRange = (ageLowLimit, ageHighLimit, handler) => {
+    var filtro1 = {"age": ObjAge(ageLowLimit)};
+    var filtro2 = {"age": ObjAge(ageHighLimit)};
+
+    empColl.find(filter,(err,doc)=>{
+      if(err) {
+        handler(err, null);
+      } else {
+          if(doc){
+            empColl.filtrou(filtro1,filtro2, (err, rsult)=>{
+              if(err) {
+                handler(err, null);
+              }else{
+                handler(null, rsult.result);
+              }
+            });
+        }
+    });
     //implementar
     // Mostrar todos los documento incluyendo los extremos
     // que esten entre las edades indicadas por los parametros
     // ageLowLimit y ageHighLimit
     // solo mostrar name, age, email
-    return handler(new Error("No Implementado"), null);
+
   }
 
   lib.getEmployeesByTag = (tag, handler) => {
     var queryObject= {"tags": {"$in": Array.isArray(tags)? tags: [tags]}};
-  obt.find(queryObject).toArray((err, docs) => {
+  empColl.find(queryObject).toArray((err, docs) => {
     if(err){
       handler(err, null);
     }else{
@@ -71,7 +89,7 @@ obt.findOne({"company": new ObjectID(company)},(err, doc)=>{
   lib.addEmployeeATag = ( tag, id, handler) => {
     var curatedTags = Array.isArray(tags)? tags: [tags];
   var updateObject = { "$set": { "tags": curatedTags}};
-  obt.updateOne({"_id": ObjectId(id)}, updateObject, (err, rsult)=>{
+  empColl.updateOne({"_id": ObjectId(id)}, updateObject, (err, rsult)=>{
       if(err){
         handler(err, null);
       }else{
@@ -84,9 +102,14 @@ obt.findOne({"company": new ObjectID(company)},(err, doc)=>{
   }
 
   lib.removeEmployee = (id, handler) => {
-    //Implementar
-    //Se requiere eliminar un documento de la colección
-    return handler(new Error("No Implementado"), null);
+    empColl.BorrarEmpleado({"_id": EmployeeID(id)},(err, rsult)=>{
+      if(err){
+        console.log(err);
+        handler(err, null);
+      } else {
+        handler(null, rslt.result);
+      }
+    });
   }
 
   lib.increaseAgeToAll = (ageDelta, handler) => {

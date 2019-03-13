@@ -77,6 +77,21 @@ router.put('/addtags/:id', (req, res, next)=>{
     return res.status(200).json(rsult);
   });// addTag
 });// addtags
+
+router.delete('/delete/:id', function(req, res, next){
+  var _id = req.params.id;
+  employeeModel.removeEmployee(id, (err, result)=>{
+    if(err){
+      return res.status(500).json({"error":"No se pudo eliminar empleado"});
+    }
+    return res.status(200).json(result);
+  }); //delete
+}); // BorrarEmpleado
+
+router.get('/byagerange/:min/:max', (req, res, next)=>{
+  
+});
+
   return router;
 }
 
